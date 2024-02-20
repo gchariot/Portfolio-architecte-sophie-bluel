@@ -28,6 +28,9 @@ article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
 	display: block;
 }
+a {
+	text-decoration: none;
+}
 body {
 	line-height: 1;
 }
@@ -93,6 +96,7 @@ nav ul {
 nav li {
 	padding: 0 10px;
 	font-size: 1.2em;
+	cursor: pointer;
 }
 
 li:hover {
