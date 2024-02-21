@@ -208,6 +208,10 @@ margin: auto;
 #login {
 	margin-top: 100px;
 }
+#error-container {
+	color: red;
+	margin-top: 20px;
+}
 
 input[type="submit"]{
 	font-family: 'Syne';
@@ -226,4 +230,3 @@ footer nav ul {
 	justify-content: flex-end;
 	margin: 2em
 }
-
