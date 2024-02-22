@@ -21,13 +21,16 @@ document.addEventListener("DOMContentLoaded", async function () {
       });
 
       if (response.ok) {
-        const authToken = response.headers.get("Authorization");
+        const data = await response.json();
+        const authToken = data.token;
+        console.log("Authorization Token:", authToken);
         localStorage.setItem("authToken", authToken);
 
         window.location.href = "index.html";
       } else {
+        const errorData = await response.json();
         errorContainer.textContent =
-          "Erreur dans l’identifiant ou le mot de passe";
+          errorData.message || "Erreur dans l’identifiant ou le mot de passe";
       }
     } catch (error) {
       console.error("Une erreur s'est produite :", error);
