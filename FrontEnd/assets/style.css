@@ -150,6 +150,9 @@ button:focus {
 #portfolio h2 {
 	text-align: center;
 	margin-bottom: 1em;
+	display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .filters {
 	margin-bottom: 3em;
@@ -229,4 +232,35 @@ footer nav ul {
 	display: flex;
 	justify-content: flex-end;
 	margin: 2em
+}
+#authSuccessMessage {
+	background-color: black;
+	text-align: center;
+	padding: 10px;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: white;
+	display: none;
+}
+.fa-regular {
+	margin-right: 10px;
+}
+
+#loginLogoutLink {
+	font-size: 1.2em;
+	padding: 0 10px;
+}
+.hidden {
+	display: none;
+  }
+#editButton {
+	border: none;
+	color: black;
+	font-size: 14px;
+	font-family:"Work Sans";
 }

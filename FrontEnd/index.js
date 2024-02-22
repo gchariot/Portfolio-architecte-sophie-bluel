@@ -1,69 +1,104 @@
-let works = [];
-let categories = [];
+// Fonctions pour récupérer les données de l'API
+const fetchData = async (url) => {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return await response.json();
+  } catch (error) {
+    console.error("Fetch Error: ", error);
+  }
+};
 
 const fetchWorks = async () => {
-  await fetch("http://localhost:5678/api/works")
-    .then((res) => res.json())
-    .then((data) => {
-      works = data;
-    });
-
+  works = await fetchData("http://localhost:5678/api/works");
   console.log(works);
   updateGallery();
 };
 
 const fetchCategories = async () => {
-  await fetch("http://localhost:5678/api/categories")
-    .then((res) => res.json())
-    .then((data) => {
-      categories = data;
-    });
-
+  categories = await fetchData("http://localhost:5678/api/categories");
   console.log(categories);
   createFilterButtons();
 };
 
+// Fonctions pour mettre à jour le DOM
 const createFilterButtons = () => {
   const filtersContainer = document.querySelector(".filters");
+  filtersContainer.innerHTML = ""; // Reset pour éviter les duplications
 
-  // Crée et ajoute le bouton "Tous"
-  const allButton = document.createElement("button");
-  allButton.textContent = "Tous";
-  allButton.addEventListener("click", () => updateGallery());
+  const allButton = createButton("Tous", () => updateGallery());
   filtersContainer.appendChild(allButton);
 
-  // Crée un bouton pour chaque catégorie dans les données récupérées
   categories.forEach((category) => {
-    const button = document.createElement("button");
-    button.textContent = category.name;
-    button.addEventListener("click", () => updateGallery(category.name));
+    const button = createButton(category.name, () =>
+      updateGallery(category.name)
+    );
     filtersContainer.appendChild(button);
   });
 
-  // Simule un clic sur le bouton "Tous" pour afficher tous les travaux dès le chargement
-  allButton.click();
-  fetchWorks();
+  allButton.click(); // Affiche tous les travaux dès le chargement
+};
+
+const createButton = (text, clickHandler) => {
+  const button = document.createElement("button");
+  button.textContent = text;
+  button.addEventListener("click", clickHandler);
+  return button;
 };
 
 const updateGallery = (filter = null) => {
   const galleryContainer = document.querySelector(".gallery");
   galleryContainer.innerHTML = "";
 
-  works.forEach((work) => {
-    if (!filter || work.category.name === filter) {
-      const worksElement = document.createElement("figure");
-      const imageElement = document.createElement("img");
-      imageElement.src = work.imageUrl;
-      const captionElement = document.createElement("figcaption");
-      captionElement.textContent = work.title;
+  const filteredWorks = filter
+    ? works.filter((work) => work.category.name === filter)
+    : works;
 
-      worksElement.appendChild(imageElement);
-      worksElement.appendChild(captionElement);
-      galleryContainer.appendChild(worksElement);
-    }
+  filteredWorks.forEach((work) => {
+    const worksElement = document.createElement("figure");
+    const imageElement = document.createElement("img");
+    imageElement.src = work.imageUrl;
+    const captionElement = document.createElement("figcaption");
+    captionElement.textContent = work.title;
+
+    worksElement.appendChild(imageElement);
+    worksElement.appendChild(captionElement);
+    galleryContainer.appendChild(worksElement);
   });
 };
 
+// Gestion de l'affichage en fonction de l'état de connexion
+const toggleAuthElements = () => {
+  const authToken = localStorage.getItem("authToken");
+  const authMessage = document.getElementById("authSuccessMessage");
+  const editButton = document.getElementById("editButton");
+  const filterButtons = document.querySelector(".filters");
+
+  authMessage.style.display = authToken ? "flex" : "none";
+  editButton.style.display = authToken ? "block" : "none";
+  filterButtons.style.display = authToken ? "none" : "flex";
+};
+
+// Gestion de la connexion/déconnexion
+const setupLoginLogout = () => {
+  const loginLogoutLink = document.getElementById("loginLogoutLink");
+  if (localStorage.getItem("authToken")) {
+    loginLogoutLink.textContent = "logout";
+    loginLogoutLink.href = "#";
+    loginLogoutLink.onclick = () => {
+      localStorage.removeItem("authToken");
+      window.location.href = "login.html";
+    };
+  } else {
+    loginLogoutLink.textContent = "login";
+    loginLogoutLink.href = "login.html";
+  }
+};
+
+// Initialisation
 document.addEventListener("DOMContentLoaded", () => {
   fetchCategories();
+  fetchWorks();
+  setupLoginLogout();
+  toggleAuthElements();
 });

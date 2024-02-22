@@ -14,18 +14,12 @@ document.addEventListener("DOMContentLoaded", async function () {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
+        body: JSON.stringify({ email, password }),
       });
 
       if (response.ok) {
-        const data = await response.json();
-        const authToken = data.token;
-        console.log("Authorization Token:", authToken);
-        localStorage.setItem("authToken", authToken);
-
+        const { token } = await response.json();
+        localStorage.setItem("authToken", token);
         window.location.href = "index.html";
       } else {
         const errorData = await response.json();

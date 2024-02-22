@@ -9,11 +9,17 @@
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Work+Sans&display=swap"
 		rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 	<meta name="description" content="">
 	<link rel="stylesheet" href="./assets/style.css">
 </head>
 
 <body>
+	<div id="authSuccessMessage">
+		<i class="fa-regular fa-pen-to-square"></i>
+		<p>Mode édition</p>
+	</div>
+
 	<header>
 		<a href="./index.html">
 			<h1>Sophie Bluel <span>Architecte d'intérieur</span></h1>
@@ -23,17 +29,17 @@
 				<a href="./index.html">
 					<li>projets</li>
 				</a>
-
 				<a href="">
 					<li>contact</li>
 				</a>
-				<a href="./login.html">
+				<a href="./login.html" id="loginLogoutLink">
 					<li>login</li>
 				</a>
 				<li><img src="./assets/icons/instagram.png" alt="Instagram"></li>
 			</ul>
 		</nav>
 	</header>
+
 	<main>
 		<section id="introduction">
 			<figure>
@@ -51,12 +57,12 @@
 			</article>
 		</section>
 		<section id="portfolio">
-			<h2>Mes Projets</h2>
-			<div class="filters">
+			<h2>Mes projets <button id="editButton" class="hidden"><i
+						class="fa-regular fa-pen-to-square"></i>Modifier</button></h2>
 
+			<div class="filters hidden" id="filterButtons">
 			</div>
 			<div class="gallery">
-
 			</div>
 		</section>
 		<section id="contact">
@@ -84,7 +90,6 @@
 		</nav>
 	</footer>
 	<script src="./index.js"></script>
-	<script src="./login.js"></script>
 </body>
 
 </html>
