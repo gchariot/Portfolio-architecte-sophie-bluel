@@ -24,7 +24,7 @@ const fetchCategories = async () => {
 // Fonctions pour mettre à jour le DOM
 const createFilterButtons = () => {
   const filtersContainer = document.querySelector(".filters");
-  filtersContainer.innerHTML = ""; // Reset pour éviter les duplications
+  filtersContainer.innerHTML = "";
 
   const allButton = createButton("Tous", () => updateGallery());
   filtersContainer.appendChild(allButton);
@@ -35,8 +35,8 @@ const createFilterButtons = () => {
     );
     filtersContainer.appendChild(button);
   });
-
-  allButton.click(); // Affiche tous les travaux dès le chargement
+  // Affiche tous les travaux dès le chargement
+  allButton.click();
 };
 
 const createButton = (text, clickHandler) => {
@@ -102,3 +102,48 @@ document.addEventListener("DOMContentLoaded", () => {
   setupLoginLogout();
   toggleAuthElements();
 });
+
+//////         Modale      /////////////////////////
+const updateModalGallery = () => {
+  const gridContainer = document.querySelector(".grid-container");
+  gridContainer.innerHTML = ""; // Nettoyer les anciennes images
+
+  works.forEach((work) => {
+    const gridItem = document.createElement("div");
+    gridItem.className = "grid-item";
+
+    const imageElement = document.createElement("img");
+    imageElement.src = work.imageUrl;
+    imageElement.alt = work.title;
+    imageElement.style.width = "100%"; // Assurez-vous que l'image s'adapte à la grille
+
+    gridItem.appendChild(imageElement);
+    gridContainer.appendChild(gridItem);
+  });
+};
+// Fonction pour ouvrir la modale
+const openEditModal = () => {
+  const modal = document.getElementById("editModal");
+  modal.style.display = "block";
+  updateModalGallery();
+};
+
+// Fonction pour fermer la modale
+const closeEditModal = () => {
+  const modal = document.getElementById("editModal");
+  modal.style.display = "none";
+};
+
+// Ajouter l'événement pour ouvrir la modale
+document.getElementById("editButton").addEventListener("click", openEditModal);
+
+// Ajouter l'événement pour fermer la modale
+document.querySelector(".close").addEventListener("click", closeEditModal);
+
+// Fermer la modale si l'utilisateur clique en dehors de celle-ci
+window.onclick = (event) => {
+  const modal = document.getElementById("editModal");
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+};
