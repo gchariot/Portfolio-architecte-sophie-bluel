@@ -283,12 +283,16 @@ footer nav ul {
 
 .modal-content {
   background-color: #fefefe;
-  margin: 15% auto; 
-  padding: 20px;
+  margin: 8% auto; 
+  padding: 0 60px;
   border: 1px solid #888;
   border-radius: 5px;
   width: 40%; 
   text-align: center;
+  position: relative;
+}
+.modal-content h2 {
+	margin-top: 40px;
 }
 
 .close {
@@ -313,6 +317,7 @@ width: 300px;
 text-align: center;
 border-radius: 60px ;
 cursor: pointer;
+margin-bottom: 40px;
 }
 
 .grid-container {
@@ -320,15 +325,16 @@ cursor: pointer;
 	grid-template-columns: repeat(5, 1fr);
 	gap: 10px;
 	padding: 10px;
-	margin: 35px  0;
+	margin: 35px 0;
   }
   
-  .grid-item {
+.grid-item {
 	border: 1px solid #ccc;
 	border-radius: 4px;
+	position: relative;
   }
   
-  .grid-item img {
+.grid-item img {
 	width: 100%; 
 	height: auto; 
 	display: block;

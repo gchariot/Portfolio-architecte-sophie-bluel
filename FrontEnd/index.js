@@ -6,8 +6,11 @@ const fetchData = async (url) => {
     return await response.json();
   } catch (error) {
     console.error("Fetch Error: ", error);
+    return null;
   }
 };
+let works = [];
+let categories = [];
 
 const fetchWorks = async () => {
   works = await fetchData("http://localhost:5678/api/works");
@@ -58,13 +61,32 @@ const updateGallery = (filter = null) => {
     const worksElement = document.createElement("figure");
     const imageElement = document.createElement("img");
     imageElement.src = work.imageUrl;
+    imageElement.alt = work.title;
     const captionElement = document.createElement("figcaption");
     captionElement.textContent = work.title;
 
     worksElement.appendChild(imageElement);
     worksElement.appendChild(captionElement);
     galleryContainer.appendChild(worksElement);
+    galleryContainer.appendChild(worksElement);
   });
+};
+const deleteWork = async (workId, callback) => {
+  try {
+    const authToken = localStorage.getItem("authToken");
+    const response = await fetch(`http://localhost:5678/api/works/${workId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    console.log("Work deleted successfully");
+
+    if (callback) callback(workId);
+  } catch (error) {
+    console.error("Delete Error: ", error);
+  }
 };
 
 // Gestion de l'affichage en fonction de l'état de connexion
@@ -106,18 +128,46 @@ document.addEventListener("DOMContentLoaded", () => {
 //////         Modale      /////////////////////////
 const updateModalGallery = () => {
   const gridContainer = document.querySelector(".grid-container");
-  gridContainer.innerHTML = ""; // Nettoyer les anciennes images
+  gridContainer.innerHTML = "";
 
   works.forEach((work) => {
     const gridItem = document.createElement("div");
     gridItem.className = "grid-item";
 
+    // Ajouter l'image
     const imageElement = document.createElement("img");
     imageElement.src = work.imageUrl;
     imageElement.alt = work.title;
-    imageElement.style.width = "100%"; // Assurez-vous que l'image s'adapte à la grille
-
+    imageElement.style.width = "100%";
     gridItem.appendChild(imageElement);
+
+    // Ajouter l'icône de corbeille
+    const deleteIcon = document.createElement("i");
+    deleteIcon.className = "delete-icon fa fa-trash";
+    deleteIcon.style.position = "absolute";
+    deleteIcon.style.top = "5px";
+    deleteIcon.style.right = "5px";
+    deleteIcon.style.cursor = "pointer";
+    deleteIcon.setAttribute("data-id", work.id);
+    gridItem.appendChild(deleteIcon);
+
+    deleteIcon.addEventListener("click", (event) => {
+      event.stopPropagation(); // Empêche l'événement de se propager à des éléments parents
+      event.preventDefault(); // Empêche le comportement par défaut si l'icône est dans un lien ou un bouton
+      const workId = work.id; // Récupère l'ID du travail à partir de l'objet `work`
+
+      deleteWork(workId, (id) => {
+        // Callback pour supprimer l'élément du DOM
+        // On cherche l'élément parent le plus proche avec la classe spécifiée qui correspond au conteneur du travail
+        const elementToDelete = document
+          .querySelector(`[data-id="${id}"]`)
+          .closest(".grid-item");
+        if (elementToDelete) {
+          elementToDelete.remove(); // Supprime l'élément du DOM
+        }
+      });
+    });
+
     gridContainer.appendChild(gridItem);
   });
 };
@@ -140,7 +190,7 @@ document.getElementById("editButton").addEventListener("click", openEditModal);
 // Ajouter l'événement pour fermer la modale
 document.querySelector(".close").addEventListener("click", closeEditModal);
 
-// Fermer la modale si l'utilisateur clique en dehors de celle-ci
+// Fermer la modale si l'utilisateur clique en dehors
 window.onclick = (event) => {
   const modal = document.getElementById("editModal");
   if (event.target == modal) {
