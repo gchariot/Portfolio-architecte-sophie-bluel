@@ -92,7 +92,31 @@
 	<div id="editModal" class="modal">
 		<div class="modal-content">
 			<span class="close">&times;</span>
-			<h2>Galerie photo</h2>
+			<h2 id="modalTitle">Galerie photo</h2>
+			<form id="addPhotoForm" style="display: none;">
+				<div class="photo-upload-container">
+					<label for="photoInput" class="photo-upload">
+						<div class="photo-preview" id="photoPreview">
+							<i class="fa fa-plus"></i>
+							<span>Ajouter photo</span>
+							<span>jpg, png : 4mo max</span>
+						</div>
+						<img id="photoPreview" src="" alt="Prévisualisation"
+							style="display: none; max-width: 100%; height: auto;">
+					</label>
+					<input type="file" id="photoInput" name="image" accept="image/*" hidden>
+				</div>
+				<div class="form-group">
+					<label for="titleInput">Titre</label>
+					<input type="text" id="titleInput" name="title" placeholder="Titre">
+				</div>
+				<div class="form-group">
+					<label for="categorySelect">Catégorie</label>
+					<select id="categorySelect" name="category">
+					</select>
+				</div>
+				<button type="submit" class="btn-submit">Valider</button>
+			</form>
 			<div class="grid-container">
 			</div>
 			<button id="addPhotoButton">Ajouter une photo</button>

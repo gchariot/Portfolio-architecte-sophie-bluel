@@ -134,7 +134,6 @@ const updateModalGallery = () => {
     const gridItem = document.createElement("div");
     gridItem.className = "grid-item";
 
-    // Ajouter l'image
     const imageElement = document.createElement("img");
     imageElement.src = work.imageUrl;
     imageElement.alt = work.title;
@@ -152,18 +151,16 @@ const updateModalGallery = () => {
     gridItem.appendChild(deleteIcon);
 
     deleteIcon.addEventListener("click", (event) => {
-      event.stopPropagation(); // Empêche l'événement de se propager à des éléments parents
-      event.preventDefault(); // Empêche le comportement par défaut si l'icône est dans un lien ou un bouton
-      const workId = work.id; // Récupère l'ID du travail à partir de l'objet `work`
+      event.stopPropagation();
+      event.preventDefault();
+      const workId = work.id;
 
       deleteWork(workId, (id) => {
-        // Callback pour supprimer l'élément du DOM
-        // On cherche l'élément parent le plus proche avec la classe spécifiée qui correspond au conteneur du travail
         const elementToDelete = document
           .querySelector(`[data-id="${id}"]`)
           .closest(".grid-item");
         if (elementToDelete) {
-          elementToDelete.remove(); // Supprime l'élément du DOM
+          elementToDelete.remove();
         }
       });
     });
@@ -184,10 +181,7 @@ const closeEditModal = () => {
   modal.style.display = "none";
 };
 
-// Ajouter l'événement pour ouvrir la modale
 document.getElementById("editButton").addEventListener("click", openEditModal);
-
-// Ajouter l'événement pour fermer la modale
 document.querySelector(".close").addEventListener("click", closeEditModal);
 
 // Fermer la modale si l'utilisateur clique en dehors
@@ -197,3 +191,102 @@ window.onclick = (event) => {
     modal.style.display = "none";
   }
 };
+// Ajoutez les catégories au select du formulaire
+const populateCategories = () => {
+  const select = document.getElementById("categorySelect");
+  select.innerHTML = "";
+  categories.forEach((category) => {
+    const option = document.createElement("option");
+    option.value = category.id;
+    option.textContent = category.name;
+    select.appendChild(option);
+  });
+};
+
+// Fonction pour basculer l'affichage entre la galerie et le formulaire d'ajout de photo
+const toggleModalContent = () => {
+  const modalTitle = document.getElementById("modalTitle");
+  const gridContainer = document.querySelector(".grid-container");
+  const addPhotoForm = document.getElementById("addPhotoForm");
+  const addPhotoButton = document.getElementById("addPhotoButton");
+
+  if (addPhotoForm.style.display === "none") {
+    modalTitle.textContent = "Ajout de photo";
+    gridContainer.style.display = "none";
+    addPhotoForm.style.display = "block";
+    addPhotoButton.textContent = "Retour à la galerie";
+  } else {
+    modalTitle.textContent = "Galerie photo";
+    gridContainer.style.display = "grid";
+    addPhotoForm.style.display = "none";
+    addPhotoButton.textContent = "Ajouter une photo";
+    updateModalGallery();
+  }
+};
+const handlePhotoSubmit = async (event) => {
+  event.preventDefault();
+  const formData = new FormData(event.target);
+  const errorMessage = document.getElementById("errorMessage");
+  const authToken = localStorage.getItem("authToken");
+
+  if (!authToken) {
+    console.error("Auth token not found. Please login first.");
+    errorMessage.textContent = "Veuillez vous connecter pour continuer.";
+    errorMessage.style.display = "block";
+    return;
+  }
+
+  try {
+    const response = await fetch("http://localhost:5678/api/works", {
+      method: "POST",
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    const result = await response.json();
+    console.log("Work added successfully", result);
+
+    closeEditModal();
+    fetchWorks();
+  } catch (error) {
+    console.error("Add Work Error: ", error);
+    errorMessage.textContent =
+      "Erreur lors de l'ajout du travail. Veuillez réessayer.";
+    errorMessage.style.display = "block";
+  }
+};
+document
+  .getElementById("addPhotoForm")
+  .addEventListener("submit", handlePhotoSubmit);
+
+document.addEventListener("DOMContentLoaded", async () => {
+  await fetchCategories();
+  populateCategories();
+  fetchWorks();
+  setupLoginLogout();
+  toggleAuthElements();
+});
+
+document
+  .getElementById("addPhotoButton")
+  .addEventListener("click", toggleModalContent);
+
+//*********** */ Prévisualisation Photo *********//
+document
+  .getElementById("photoInput")
+  .addEventListener("change", function (event) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const photoPreview = document.getElementById("photoPreview");
+      const newImage = document.createElement("img");
+      newImage.src = e.target.result;
+      photoPreview.innerHTML = "";
+      photoPreview.appendChild(newImage);
+      document.getElementById("addPhotoText").style.display = "none";
+      document.getElementById("fileInfoText").style.display = "none";
+    };
+    reader.readAsDataURL(event.target.files[0]);
+  });

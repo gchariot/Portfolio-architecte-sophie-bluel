@@ -267,7 +267,7 @@ footer nav ul {
 	font-family:"Work Sans";
 }
 
-/******** Modale ***********/
+/********** Modale ****************/
 .modal {
   display: none;
   position: fixed; 
@@ -296,9 +296,8 @@ footer nav ul {
 }
 
 .close {
-  color: #aaa;
   float: right;
-  font-size: 28px;
+  font-size: 24px;
   font-weight: bold;
 }
 
@@ -341,4 +340,69 @@ margin-bottom: 40px;
 	margin: 0;
 	padding: 0;
   }
+/********** Modale ajout photo ****************/
+.photo-upload-container {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.photo-upload {
+    display: inline-block;
+    padding: 10px;
+    border: 1px dashed #ccc;
+    cursor: pointer;
+    margin-bottom: 10px;
+    color: #999;
+    background-color: #E8F1F6
+}
+
+.photo-upload i {
+    display: block;
+    font-size: 24px;
+    margin-bottom: 8px;
+}
+
+.form-group {
+    margin-bottom: 10px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Ajouts pour le formulaire dans la modale */
+#addPhotoForm {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* Styles pour les inputs et select dans le formulaire */
+#addPhotoForm input[type="text"],
+#addPhotoForm select {
+    width: 50%; 
+    margin-bottom: 15px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    height: 40px; /* Hauteur ajustée pour les champs de texte et le select */
+    font-size: 14px;
+}
+
+.photo-preview {
+	/* ... autres styles ... */
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	overflow: hidden; /* Empêche l'image de déborder */
+  }
+  
+  .photo-preview img {
+	max-height: 200px;
+	max-width: 100%;
+	height: auto; /* Gardez le rapport hauteur/largeur */
+  }
+
 
