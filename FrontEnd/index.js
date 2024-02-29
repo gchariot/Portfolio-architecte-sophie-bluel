@@ -14,13 +14,11 @@ let categories = [];
 
 const fetchWorks = async () => {
   works = await fetchData("http://localhost:5678/api/works");
-  console.log(works);
   updateGallery();
 };
 
 const fetchCategories = async () => {
   categories = await fetchData("http://localhost:5678/api/categories");
-  console.log(categories);
   createFilterButtons();
 };
 
@@ -42,6 +40,7 @@ const createFilterButtons = () => {
   allButton.click();
 };
 
+// Création Bouton et appel gallery//////
 const createButton = (text, clickHandler) => {
   const button = document.createElement("button");
   button.textContent = text;
@@ -68,25 +67,7 @@ const updateGallery = (filter = null) => {
     worksElement.appendChild(imageElement);
     worksElement.appendChild(captionElement);
     galleryContainer.appendChild(worksElement);
-    galleryContainer.appendChild(worksElement);
   });
-};
-const deleteWork = async (workId, callback) => {
-  try {
-    const authToken = localStorage.getItem("authToken");
-    const response = await fetch(`http://localhost:5678/api/works/${workId}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-    });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    console.log("Work deleted successfully");
-
-    if (callback) callback(workId);
-  } catch (error) {
-    console.error("Delete Error: ", error);
-  }
 };
 
 // Gestion de l'affichage en fonction de l'état de connexion
@@ -101,7 +82,7 @@ const toggleAuthElements = () => {
   filterButtons.style.display = authToken ? "none" : "flex";
 };
 
-// Gestion de la connexion/déconnexion
+// Gestion de la connexion/déconnexion ////////////////
 const setupLoginLogout = () => {
   const loginLogoutLink = document.getElementById("loginLogoutLink");
   if (localStorage.getItem("authToken")) {
@@ -117,15 +98,7 @@ const setupLoginLogout = () => {
   }
 };
 
-// Initialisation
-document.addEventListener("DOMContentLoaded", () => {
-  fetchCategories();
-  fetchWorks();
-  setupLoginLogout();
-  toggleAuthElements();
-});
-
-//////         Modale      /////////////////////////
+////////////         Modale      /////////////////////////
 const updateModalGallery = () => {
   const gridContainer = document.querySelector(".grid-container");
   gridContainer.innerHTML = "";
@@ -191,35 +164,44 @@ window.onclick = (event) => {
     modal.style.display = "none";
   }
 };
-// Ajoutez les catégories au select du formulaire
-const populateCategories = () => {
-  const select = document.getElementById("categorySelect");
-  select.innerHTML = "";
-  categories.forEach((category) => {
-    const option = document.createElement("option");
-    option.value = category.id;
-    option.textContent = category.name;
-    select.appendChild(option);
-  });
+// Suppression Travaux //////////////////
+const deleteWork = async (workId, callback) => {
+  try {
+    const authToken = localStorage.getItem("authToken");
+    const response = await fetch(`http://localhost:5678/api/works/${workId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+    if (callback) callback(workId);
+  } catch (error) {
+    console.error("Delete Error: ", error);
+  }
 };
 
-// Fonction pour basculer l'affichage entre la galerie et le formulaire d'ajout de photo
+// Fonction pour basculer l'affichage entre la galerie et le formulaire d'ajout de photos
 const toggleModalContent = () => {
   const modalTitle = document.getElementById("modalTitle");
   const gridContainer = document.querySelector(".grid-container");
   const addPhotoForm = document.getElementById("addPhotoForm");
   const addPhotoButton = document.getElementById("addPhotoButton");
+  const backToGalleryIcon = document.getElementById("backToGalleryIcon");
 
   if (addPhotoForm.style.display === "none") {
     modalTitle.textContent = "Ajout de photo";
     gridContainer.style.display = "none";
     addPhotoForm.style.display = "block";
-    addPhotoButton.textContent = "Retour à la galerie";
+    addPhotoButton.style.display = "none";
+    backToGalleryIcon.style.display = "block";
   } else {
     modalTitle.textContent = "Galerie photo";
     gridContainer.style.display = "grid";
     addPhotoForm.style.display = "none";
-    addPhotoButton.textContent = "Ajouter une photo";
+    addPhotoButton.style.display = "block";
+    backToGalleryIcon.style.display = "none";
     updateModalGallery();
   }
 };
@@ -247,7 +229,6 @@ const handlePhotoSubmit = async (event) => {
 
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const result = await response.json();
-    console.log("Work added successfully", result);
 
     closeEditModal();
     fetchWorks();
@@ -274,7 +255,11 @@ document
   .getElementById("addPhotoButton")
   .addEventListener("click", toggleModalContent);
 
-//*********** */ Prévisualisation Photo *********//
+document.getElementById("backToGalleryIcon").addEventListener("click", () => {
+  toggleModalContent();
+});
+
+//************ Prévisualisation Photo *********//
 document
   .getElementById("photoInput")
   .addEventListener("change", function (event) {
@@ -290,3 +275,34 @@ document
     };
     reader.readAsDataURL(event.target.files[0]);
   });
+
+//***********/ Obligation Jpeg et 4mo********* //
+document.getElementById("photoInput").addEventListener("change", function () {
+  var file = this.files[0];
+  if (file.size > 4194304) {
+    alert("Le fichier doit être inférieur à 4 Mo.");
+    this.value = "";
+  } else if (!file.type.match("image/jpeg") && !file.type.match("image/png")) {
+    alert("Seuls les fichiers JPG et PNG sont autorisés.");
+    this.value = "";
+  }
+});
+// Ajoutez les catégories au select du formulaire
+const populateCategories = () => {
+  const select = document.getElementById("categorySelect");
+  select.innerHTML = "";
+  categories.forEach((category) => {
+    const option = document.createElement("option");
+    option.value = category.id;
+    option.textContent = category.name;
+    select.appendChild(option);
+  });
+};
+
+// Initialisation
+document.addEventListener("DOMContentLoaded", () => {
+  fetchCategories();
+  fetchWorks();
+  setupLoginLogout();
+  toggleAuthElements();
+});

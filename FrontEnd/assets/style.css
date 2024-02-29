@@ -31,7 +31,7 @@ footer, header, hgroup, menu, nav, section {
 a {
 	text-decoration: none;
 }
-a:selection {
+a::selection {
 	color: black;
 }
 body {
@@ -291,14 +291,22 @@ footer nav ul {
   text-align: center;
   position: relative;
 }
+
 .modal-content h2 {
 	margin-top: 40px;
+	color: #000;
+	text-align: center;
+	font-family: "Work Sans";
+	font-size: 26px;
+	font-weight: 400;
 }
 
 .close {
-  float: right;
   font-size: 24px;
   font-weight: bold;
+  position: absolute;
+  top: 15px;
+  right: 25px;
 }
 
 .close:hover,
@@ -307,31 +315,55 @@ footer nav ul {
   text-decoration: none;
   cursor: pointer;
 }
+
+#backToGalleryIcon {
+	position: absolute;
+	top: 15px;
+	left: 25px;
+	width: 21px;
+	height: 21px; 
+	cursor: pointer;
+	display: block; 
+	position: absolute;
+}
+
 #addPhotoButton {
-font-family: 'Syne';
-font-weight: 700;
-color: white;
-background-color: #1D6154;
-width: 300px;
-text-align: center;
-border-radius: 60px ;
-cursor: pointer;
-margin-bottom: 40px;
+	border-radius: 60px ;
+	background-color: #1D6154;
+	font-weight: 700;
+	font-family: 'Syne';
+	text-align: center;
+	color: white;
+	cursor: pointer;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 40px;
+	padding: 5px 50px;
+	font-size: 14px;
+}
+
+.delete-icon {
+	color: white;
+	background-color: #000;
+	padding: 5px;
+	border-radius: 2px;
+	font-size: 10px;
 }
 
 .grid-container {
 	display: grid;
 	grid-template-columns: repeat(5, 1fr);
 	gap: 10px;
-	padding: 10px;
-	margin: 35px 0;
-  }
+	padding: 50px 0;
+	margin-bottom: 35px;
+	border-bottom: 1px solid #B3B3B3;
+}
   
 .grid-item {
 	border: 1px solid #ccc;
 	border-radius: 4px;
 	position: relative;
-  }
+}
   
 .grid-item img {
 	width: 100%; 
@@ -339,21 +371,30 @@ margin-bottom: 40px;
 	display: block;
 	margin: 0;
 	padding: 0;
-  }
+}
+
 /********** Modale ajout photo ****************/
 .photo-upload-container {
     margin: 20px 0;
-    text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
 }
 
 .photo-upload {
-    display: inline-block;
     padding: 10px;
-    border: 1px dashed #ccc;
     cursor: pointer;
     margin-bottom: 10px;
     color: #999;
-    background-color: #E8F1F6
+    background-color: #E8F1F6; 
+	width: 100%;
+	border-radius: 3px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
 }
 
 .photo-upload i {
@@ -363,12 +404,19 @@ margin-bottom: 40px;
 }
 
 .form-group {
-    margin-bottom: 10px;
+    margin-bottom: 5px;
+	display: block;
+	text-align: left;
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
+}
+.btn-container {
+	border-top: 1px solid #B3B3B3;
+	padding-top: 35px;
+	margin-top: 35px;
 }
 
 /* Ajouts pour le formulaire dans la modale */
@@ -380,29 +428,61 @@ margin-bottom: 40px;
     padding: 20px;
 }
 
-/* Styles pour les inputs et select dans le formulaire */
 #addPhotoForm input[type="text"],
 #addPhotoForm select {
-    width: 50%; 
+    width: 100%; 
     margin-bottom: 15px;
-    border: 1px solid #cccccc;
+    border: none;
     border-radius: 4px;
-    height: 40px; /* Hauteur ajustée pour les champs de texte et le select */
+    height: 40px; 
     font-size: 14px;
+	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 }
 
-.photo-preview {
-	/* ... autres styles ... */
+#photoPreview {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+}
+  
+#photoPreview img {
+	max-height: 200px;
+	max-width: 100%;
+	height: auto; 
+}
+
+#photoPreview p {
+	font-weight: 400;
+	color: #444;
+	font-size: 10px;
+}
+
+.addPicture {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	overflow: hidden; /* Empêche l'image de déborder */
-  }
-  
-  .photo-preview img {
-	max-height: 200px;
-	max-width: 100%;
-	height: auto; /* Gardez le rapport hauteur/largeur */
-  }
+	border-radius: 50px;
+	background-color: #cbd6dc;
+	padding: 5px 35px;
+	color: #306685;
+	text-align: center;
+	font-family: "Work Sans";
+	font-size: 14px;
+	margin: 10px;
+}
+
+.btn-submit {
+	border-radius: 60px;
+	background: #A7A7A7;
+	color: white;
+	text-align: center;
+	font-family: "Syne";
+	font-size: 14px;
+	font-weight: 700;
+	border: none;
+	padding: 5px 65px;
+}
 
 
