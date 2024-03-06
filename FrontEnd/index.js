@@ -139,10 +139,10 @@ function supprimerOeuvre(e) {
   const workId = e.target.getAttribute("data-id");
 
   fetch(`http://localhost:5678/api/works/${workId}`, {
-    method: "DELETE", // Utiliser la méthode DELETE
+    method: "DELETE",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("authToken")}`, // Ajouter le token d'autorisation si nécessaire
+      Authorization: `Bearer ${localStorage.getItem("authToken")}`,
     },
   })
     .then((response) => {
