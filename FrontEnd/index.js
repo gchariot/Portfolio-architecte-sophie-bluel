@@ -101,7 +101,7 @@ const setupLoginLogout = () => {
 ////////////         Modale      /////////////////////////
 const updateModalGallery = () => {
   const gridContainer = document.querySelector(".grid-container");
-  gridContainer.innerHTML = "";
+  gridContainer.innerHTML = ""; // Nettoyer le conteneur avant de le remplir à nouveau
 
   works.forEach((work) => {
     const gridItem = document.createElement("div");
@@ -123,24 +123,41 @@ const updateModalGallery = () => {
     deleteIcon.setAttribute("data-id", work.id);
     gridItem.appendChild(deleteIcon);
 
-    deleteIcon.addEventListener("click", (event) => {
-      event.stopPropagation();
-      event.preventDefault();
-      const workId = work.id;
+    // Ajouter un écouteur d'événements pour la suppression sur l'icône de la corbeille
+    deleteIcon.addEventListener("click", (e) => {
+      e.preventDefault();
 
-      deleteWork(workId, (id) => {
-        const elementToDelete = document
-          .querySelector(`[data-id="${id}"]`)
-          .closest(".grid-item");
-        if (elementToDelete) {
-          elementToDelete.remove();
-        }
-      });
+      const workId = e.target.getAttribute("data-id");
+      supprimerOeuvre(e);
     });
 
     gridContainer.appendChild(gridItem);
   });
 };
+function supprimerOeuvre(e) {
+  e.preventDefault();
+  const workId = e.target.getAttribute("data-id");
+
+  fetch(`http://localhost:5678/api/works/${workId}`, {
+    method: "DELETE", // Utiliser la méthode DELETE
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("authToken")}`, // Ajouter le token d'autorisation si nécessaire
+    },
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("La suppression a échoué");
+      }
+      // Supprimer visuellement l'œuvre de l'interface utilisateur
+      e.target.closest(".grid-item").remove();
+      console.log("L'œuvre a été supprimée avec succès.");
+    })
+    .catch((error) => {
+      console.error("Erreur:", error);
+    });
+}
+
 // Fonction pour ouvrir la modale
 const openEditModal = () => {
   const modal = document.getElementById("editModal");
@@ -155,33 +172,19 @@ const closeEditModal = () => {
 };
 
 document.getElementById("editButton").addEventListener("click", openEditModal);
-document.querySelector(".close").addEventListener("click", closeEditModal);
+document.querySelector(".close").addEventListener("click", (event) => {
+  event.preventDefault();
+  closeEditModal();
+});
 
 // Fermer la modale si l'utilisateur clique en dehors
 window.onclick = (event) => {
   const modal = document.getElementById("editModal");
   if (event.target == modal) {
+    event.preventDefault();
     modal.style.display = "none";
   }
 };
-// Suppression Travaux //////////////////
-const deleteWork = async (workId, callback) => {
-  try {
-    const authToken = localStorage.getItem("authToken");
-    const response = await fetch(`http://localhost:5678/api/works/${workId}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-    });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
-    if (callback) callback(workId);
-  } catch (error) {
-    console.error("Delete Error: ", error);
-  }
-};
-
 // Fonction pour basculer l'affichage entre la galerie et le formulaire d'ajout de photos
 const toggleModalContent = () => {
   const modalTitle = document.getElementById("modalTitle");
@@ -207,6 +210,7 @@ const toggleModalContent = () => {
 };
 const handlePhotoSubmit = async (event) => {
   event.preventDefault();
+  console.log("ca marche");
   const formData = new FormData(event.target);
   const errorMessage = document.getElementById("errorMessage");
   const authToken = localStorage.getItem("authToken");
@@ -228,10 +232,8 @@ const handlePhotoSubmit = async (event) => {
     });
 
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    const result = await response.json();
-
     closeEditModal();
-    fetchWorks();
+    await fetchWorks();
   } catch (error) {
     console.error("Add Work Error: ", error);
     errorMessage.textContent =
@@ -270,8 +272,6 @@ document
       newImage.src = e.target.result;
       photoPreview.innerHTML = "";
       photoPreview.appendChild(newImage);
-      document.getElementById("addPhotoText").style.display = "none";
-      document.getElementById("fileInfoText").style.display = "none";
     };
     reader.readAsDataURL(event.target.files[0]);
   });
